@@ -1,16 +1,22 @@
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import reactLogo from "./assets/react.svg";
 import "./App.css";
+import { useStatistics } from "./useStatistics";
+import { Chart } from "./chart";
 
 function App() {
   const [count, setCount] = useState(0);
-
-  useEffect(() => {
-    window.electron.subscribeStatistics((stats) => console.log(stats));
-  }, []);
+  const statistics = useStatistics(10);
+  const cpuUsages = useMemo(
+    () => statistics.map((stat) => stat.cpuUsage),
+    [statistics]
+  );
 
   return (
     <>
+      <div style={{ height: 120 }}>
+        <Chart data={cpuUsages} maxDataPoints={10} />
+      </div>
       <div>
         <a href="https://react.dev" target="_blank">
           <img src={reactLogo} className="logo react" alt="React logo" />
